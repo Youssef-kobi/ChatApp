@@ -168,7 +168,7 @@ const SideBar = () => {
         {chatPreferences.map((item) => (
           <button
             type='button'
-            className='w-14 h-14 flex justify-center items-center rounded hover:bg-gray-light group relative duration-300'
+            className='w-14 h-14 flex my-2 justify-center items-center rounded hover:bg-gray-light group relative duration-300'
           >
             {item.img}
             <span className="absolute hidden group-hover:flex -top-2 -translate-y-full px-2 py-1 bg-gray-400 rounded-lg text-center text-white-pure text-sm after:content-[''] after:absolute after:left-1/2 after:top-[100%] after:-translate-x-1/2 after:border-8 after:border-x-transparent after:border-b-transparent">
