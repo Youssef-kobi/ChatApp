@@ -30,7 +30,7 @@ const Login = () => {
   // eslint-disable-next-line no-unused-vars
   const onSubmitHandler = (data) => {
     axios
-      .post('http://172.24.147.103:1337/auth/signIn', data)
+      .post('http://localhost:1337/auth/signIn', data)
       .then((response) => {
         Auth.login(response.data.token)
         toast.success(`Hey ${data.username} welcome back :)`)
@@ -48,9 +48,9 @@ const Login = () => {
   }
   return (
     <div className='h-screen w-full flex justify-center pt-24 bg-blue-light'>
-      <div className='container w-3/12 flex flex-col items-center px-3 font-Public'>
+      <div className='container w-3/12 flex flex-col items-center px-3'>
         <div className='flex flex-col items-center w-full'>
-          <img className='mb-12 h-[30px] mx-0 ' src='./Logo.png' alt='logo' />
+          <img className='mb-12 h-[30px] mx-0 ' src='./Logo.svg' alt='logo' />
           <h4 className=' text-[1.3rem] text-center font-bold text-black-light mb-2'>
             Sign in
           </h4>

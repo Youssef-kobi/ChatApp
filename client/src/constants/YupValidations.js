@@ -33,3 +33,11 @@ export const registerSchema = yup.object().shape({
 export const resetPasswordSchema = yup.object().shape({
   email: yup.string().email().min(8).max(32).required().label('Email'),
 })
+
+export const searchSchema = yup.object().shape({
+  search: yup.string().min(3).max(32).label('search'),
+})
+
+export const messageSchema = yup.object().shape({
+  search: yup.string().min(1).max(200).label('Message'),
+})

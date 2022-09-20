@@ -21,9 +21,14 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    rememberMe: {
-      type: Boolean,
-      default: false,
+    newMessages: {
+      type: Object,
+      // required: true,
+      default: {},
+    },
+    status: {
+      type: String,
+      default: 'online',
     },
   },
   {

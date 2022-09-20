@@ -3,7 +3,9 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import AuthRoutes from './routes/AuthRoutes.js';
 import connectDB from './configs/db.js';
-// import ApiRoutes from './routes/ApiRoutes.js';
+import http from 'http';
+import { Server } from 'socket.io';
+import ApiRoutes from './routes/ApiRoutes.js';
 
 // Server Initialization
 const app = express();
@@ -13,16 +15,30 @@ dotenv.config();
 // MiddleWares
 app.use(cors());
 app.use(express.json());
-connectDB()
+connectDB();
+const server = http.createServer(app);
 app.get('/', (req, res) => {
   res.send('Hello');
 });
 // Routes will be written here
 app.use('/auth', AuthRoutes);
-// app.use('/api', ApiRoutes);
-// Server Listen Along with Database
-// connection(in case of data persistence)
-app.listen(PORT, (error) => {
+app.use('/api', ApiRoutes);
+// Socket init
+const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST'],
+  },
+});
+io.on('connection', (socket) => {
+  console.log(socket.id);
+  socket.on('sendMessage', (data) => {
+    console.log(data);
+    socket.broadcast.emit('receiveMessages', data);
+  });
+});
+console.log('lol');
+server.listen(PORT, (error) => {
   if (!error)
     console.log(
       'Server is Successfully Running,and App is listening on port ' + PORT

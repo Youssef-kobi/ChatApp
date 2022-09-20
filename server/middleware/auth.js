@@ -8,7 +8,7 @@ const auth = (req, res, next) => {
     req.username = decoded.username;
     next();
   } catch (e) {
-    // console.error(e);
+    console.error(e);
     res.status(500).send({ message: 'Invalid Token' });
   }
 };
