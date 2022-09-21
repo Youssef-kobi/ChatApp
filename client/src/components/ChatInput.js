@@ -1,11 +1,12 @@
+/* eslint-disable react/prop-types */
 import { yupResolver } from '@hookform/resolvers/yup'
-import React, { useEffect } from 'react'
+// import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { messageSchema } from '../constants/YupValidations'
-import { useSocket } from '../context/socket'
+// import { useSocket } from '../context/socket'
 
-const ChatInput = () => {
-  const socket = useSocket()
+const ChatInput = ({ socket }) => {
+  // const socket = useSocket()
   const {
     register,
     handleSubmit,
@@ -14,15 +15,16 @@ const ChatInput = () => {
     // setError,
   } = useForm({ resolver: yupResolver(messageSchema) })
 
-  useEffect(() => {
-    socket.on('receiveMessages', (data) => {
-      console.log('received', data)
-    })
-  }, [socket])
+  // useEffect(() => {
+  //   console.log('hollaaa')
+  //   socket.on('receiveMessages', (data) => {
+  //     console.log('received', data)
+  //   })
+  // }, [socket])
 
   const onSubmitHandler = (data) => {
     socket.emit('sendMessage', data)
-    console.log(data)
+    // console.log(data)
     // axios
     //   .post('http://localhost:1337/auth/signIn', data)
     //   .then((response) => {
@@ -40,7 +42,7 @@ const ChatInput = () => {
     //   })
     // reset()
   }
-  console.log(socket)
+  // console.log(socket)
   return (
     <div className='w-full h-20 flex justify-between px-4 items-center border-t'>
       <form

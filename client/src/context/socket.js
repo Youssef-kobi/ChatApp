@@ -1,8 +1,8 @@
+/* eslint-disable react/prop-types */
 import { createContext, useContext } from 'react'
 import io from 'socket.io-client'
 
-const socket = io.connect('http://localhost:1337')
-const socketContext = createContext(socket)
+export const socket = io.connect('http://localhost:1337')
+export const SocketContext = createContext()
 
-export default socketContext
-export const useSocket = () => useContext(socketContext)
+export const useSocket = () => useContext(SocketContext)

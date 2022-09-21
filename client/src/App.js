@@ -11,6 +11,7 @@ import { AuthProvider, useAuth } from './context/auth'
 // import Login from './pages/Login'
 // import Register from './pages/Register'
 import * as PATHS from './constants/routes'
+import { socket, SocketContext } from './context/socket'
 // import {BrowserRouter,Routes,Route} from 'react-dom'
 
 const Login = lazy(() => import('./pages/Login'))
@@ -31,20 +32,22 @@ const PublicOutlet = () => {
 }
 const App = () => (
   <AuthProvider>
-    <Suspense fallback='loading...'>
-      <BrowserRouter>
-        <Routes>
-          <Route element={<PublicOutlet />}>
-            <Route path={PATHS.LOGIN} element={<Login />} />
-            <Route path={PATHS.SIGNUP} element={<Register />} />
-            <Route path={PATHS.RESETPASSWORD} element={<ResetPassword />} />
-          </Route>
-          <Route element={<PrivateOutlet />}>
-            <Route path={PATHS.DASHBOARD} element={<Dashboard />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </Suspense>
+    <SocketContext.Provider value={socket}>
+      <Suspense fallback='loading...'>
+        <BrowserRouter>
+          <Routes>
+            <Route element={<PublicOutlet />}>
+              <Route path={PATHS.LOGIN} element={<Login />} />
+              <Route path={PATHS.SIGNUP} element={<Register />} />
+              <Route path={PATHS.RESETPASSWORD} element={<ResetPassword />} />
+            </Route>
+            <Route element={<PrivateOutlet />}>
+              <Route path={PATHS.DASHBOARD} element={<Dashboard />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </Suspense>
+    </SocketContext.Provider>
   </AuthProvider>
 )
 

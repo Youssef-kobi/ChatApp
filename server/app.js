@@ -36,6 +36,9 @@ io.on('connection', (socket) => {
     console.log(data);
     socket.broadcast.emit('receiveMessages', data);
   });
+  // socket.on('disconnect', () => {
+  //   console.log('user disconnected');
+  // });
 });
 console.log('lol');
 server.listen(PORT, (error) => {

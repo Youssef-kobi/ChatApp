@@ -8,7 +8,11 @@ import bcrypt from 'bcrypt';
 export const signUp = async (req, res) => {
   const { email, username, password } = req.body;
   try {
-    const user = await User.create({ email, username, password });
+    const user = await User.create({
+      email,
+      username: username.toLowerCase(),
+      password,
+    });
     res.status(201).send('Account created');
   } catch (err) {
     res.status(500).send(Object.keys(err.keyValue));

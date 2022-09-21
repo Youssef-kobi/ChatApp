@@ -1,19 +1,16 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable jsx-a11y/label-has-associated-control */
-// import { yupResolver } from '@hookform/resolvers/yup'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-// import { useForm } from 'react-hook-form'
-// import { searchSchema } from '../constants/YupValidations'
+import { toast } from 'react-toastify'
+
 import { useAuth } from '../context/auth'
-import { useSocket } from '../context/socket'
+// import { useSocket } from '../context/socket'
+import groupSorting from '../utils/groupSorting'
 
 const Contacts = () => {
-  console.log('Contacts')
   const { token } = useAuth()
-  const socket = useSocket()
-  const [letter, setLetter] = useState('')
-  // let letter
-  console.log(socket)
+  // const socket = useSocket()
   const [contacts, setContacts] = useState([])
   const [search, setSearch] = useState('')
   useEffect(() => {
@@ -24,56 +21,18 @@ const Contacts = () => {
         },
       })
       .then((response) => {
-        // Auth.login(response.data.token)
         setContacts(response.data)
-        console.log(response)
-        // toast.success(`Hey ${data.username} welcome back :)`)
-        // Navigate('/')
       })
       .catch(({ response }) => {
-        console.log(response)
-        // toast.error(response.data)
-        //   setError(
-        //     response.status === 404 ? 'username' : 'password',
-        //     { type: 'custom', message: response.data },
-        //     { shouldFocus: true }
-        //   )
+        toast.error(response.data)
       })
-    // reset()
-  }, [])
+  }, [token])
 
-  // const onSubmitHandler = (data) => {
-  //   socket.emit('sendMessage', data)
-  //   console.log(data)
-  // axios
-  //   .post('http://localhost:1337/auth/signIn', data)
-  //   .then((response) => {
-  //     Auth.login(response.data.token)
-  //     toast.success(`Hey ${data.username} welcome back :)`)
-  //     Navigate('/')
-  //   })
-  //   .catch(({ response }) => {
-  //     toast.error(response.data)
-  //     setError(
-  //       response.status === 404 ? 'username' : 'password',
-  //       { type: 'custom', message: response.data },
-  //       { shouldFocus: true }
-  //     )
-  //   })
-  // reset()
-  // }
   return (
     <div className=' w-full h-full'>
       <h4 className='text-xl font-semibold mb-6'>Contacts</h4>
-      <div className='flex flex-col w-full mb-3 text-black-light bg-gray-light rounded-md font-medium'>
-        <div
-          className={`flex w-full  h-10 `}
-          // ${
-          //   !errors.search?.message
-          //     ? 'border-gray-light'
-          //     : 'border-red-700 border-2'
-          // }
-        >
+      <div className='flex flex-col w-full mb-6 text-black-light bg-gray-light rounded-md font-medium'>
+        <div className='flex w-full  h-10'>
           <label
             htmlFor='search'
             className=' flex justify-center items-center w-12'
@@ -96,29 +55,59 @@ const Contacts = () => {
           <input
             id='search'
             className='w-full px-2 py-2 outline-none rounded-md bg-gray-light'
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            // {...register('contacts')}
             onChange={({ target }) => setSearch(target.value)}
             placeholder='search contacts'
             type='text'
           />
         </div>
       </div>
-      <h5 className='text-md font-semibold'>Recent</h5>
-      {contacts
-        .filter((item) => item.username.includes(search))
+      {Object.keys(
+        groupSorting(contacts.filter((item) => item.username.includes(search)))
+      )
         .sort()
-        .map((contact) => {
-          setLetter(contact.username[0])
-          console.log(letter)
-          return (
-            <>
-              <h1>{letter}</h1>
-              {/* eslint-disable-next-line no-underscore-dangle */}
-              <h6 key={contact._id}>{contact.username}</h6>
-            </>
-          )
-        })}
+        .map((letter) => (
+          <div key={letter} className='p-2'>
+            <h4 className='uppercase font-semibold text-md text-violet-500'>
+              {letter}
+            </h4>
+            <ul className='flex flex-col w-full items-start p-2'>
+              {groupSorting(contacts)[letter].map((word) => (
+                <div
+                  key={word._id}
+                  className='flex justify-between items-center w-full'
+                >
+                  <button
+                    type='button'
+                    onClick={() => console.log(word)}
+                    className='first-letter:uppercase font-semibold text-sm mb-1'
+                  >
+                    {word.username}
+                  </button>
+                  <button
+                    type='button'
+                    className='rounded-full hover:bg-gray-light'
+                    onClick={() => console.log(word)}
+                  >
+                    <svg
+                      className='w-6 h-6 text-gray-base'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                      xmlns='http://www.w3.org/2000/svg'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z'
+                      />
+                    </svg>
+                  </button>
+                </div>
+              ))}
+            </ul>
+          </div>
+        ))}
     </div>
   )
 }
