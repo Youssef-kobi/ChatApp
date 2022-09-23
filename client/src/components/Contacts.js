@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import axios from 'axios'
@@ -8,14 +9,14 @@ import { useAuth } from '../context/auth'
 // import { useSocket } from '../context/socket'
 import groupSorting from '../utils/groupSorting'
 
-const Contacts = () => {
+const Contacts = ({ setRoomId }) => {
   const { token } = useAuth()
   // const socket = useSocket()
   const [contacts, setContacts] = useState([])
   const [search, setSearch] = useState('')
   useEffect(() => {
     axios
-      .get('http://localhost:1337/api/users', {
+      .get('http://localhost:3001/api/users', {
         headers: {
           token,
         },
@@ -78,7 +79,7 @@ const Contacts = () => {
                 >
                   <button
                     type='button'
-                    onClick={() => console.log(word)}
+                    onClick={() => setRoomId(word)}
                     className='first-letter:uppercase font-semibold text-sm mb-1'
                   >
                     {word.username}

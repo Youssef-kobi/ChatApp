@@ -28,7 +28,7 @@ const Register = () => {
   // eslint-disable-next-line no-unused-vars
   const onSubmitHandler = (data) => {
     axios
-      .post('http://localhost:1337/auth/signUp', data)
+      .post('http://localhost:3001/auth/signUp', data)
       .then((response) => {
         toast.success(response.data)
         Navigate(PATHS.LOGIN)

@@ -1,10 +1,11 @@
+/* eslint-disable react/prop-types */
 import React from 'react'
 
-const Header = () => {
+const Header = ({ room }) => {
   console.log('header')
   return (
     <div className='w-full h-20 flex justify-between px-4 items-center border-b'>
-      <h4>username</h4>
+      <h4>{room?.username}</h4>
       <div>
         {/* search */}
         <button type='button' className='p-1 mx-1'>

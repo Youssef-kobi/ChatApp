@@ -27,7 +27,7 @@ const ResetPassword = () => {
     Navigate(PATHS.LOGIN)
 
     // axios
-    //   .post('http://localhost:1337/auth/signIn', data)
+    //   .post('http://localhost:3001/auth/signIn', data)
     //   .then((response) => {
     //     Auth.login(response.data.token)
     //     toast.success(`Hey ${data.username} welcome back :)`)

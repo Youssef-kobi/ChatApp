@@ -21,7 +21,7 @@ export const loginSchema = yup.object().shape({
               // .required()
               // .label('Email')
               .isValidSync(value)
-          : yup.string().min(8).max(32).isValidSync(value)
+          : yup.string().min(6).max(32).isValidSync(value)
       }
       return true
     }),

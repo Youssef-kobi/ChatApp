@@ -6,13 +6,15 @@ import connectDB from './configs/db.js';
 import http from 'http';
 import { Server } from 'socket.io';
 import ApiRoutes from './routes/ApiRoutes.js';
+import socketAuth from './middleware/socketAuth.js';
+
 
 // Server Initialization
 const app = express();
-const PORT = process.env.PORT || 1337;
 
 dotenv.config();
 // MiddleWares
+const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 connectDB();
@@ -30,17 +32,21 @@ const io = new Server(server, {
     methods: ['GET', 'POST'],
   },
 });
-io.on('connection', (socket) => {
-  console.log(socket.id);
-  socket.on('sendMessage', (data) => {
-    console.log(data);
-    socket.broadcast.emit('receiveMessages', data);
+io.use(socketAuth).on('connection', (socket) => {
+  console.log('Made socket connection');
+  const { roomId } = socket.handshake.query;
+  socket.join(roomId);
+
+  // Listen for new messages
+  socket.on('newChatMessage', (data) => {
+    io.in(roomId).emit('newChatMessage', data);
   });
-  // socket.on('disconnect', () => {
-  //   console.log('user disconnected');
-  // });
+
+  // Leave the room if the user closes the socket
+  socket.on('disconnect', () => {
+    socket.leave(roomId);
+  });
 });
-console.log('lol');
 server.listen(PORT, (error) => {
   if (!error)
     console.log(

@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 
 const auth = (req, res, next) => {
+  console.log(req.header('token'))
   const token = req.header('token');
   if (!token) return res.status(401).json({ message: 'Auth Error' });
   try {

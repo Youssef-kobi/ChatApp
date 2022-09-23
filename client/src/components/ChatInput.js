@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import { messageSchema } from '../constants/YupValidations'
 // import { useSocket } from '../context/socket'
 
-const ChatInput = ({ socket }) => {
+const ChatInput = ({ sendMessage }) => {
   // const socket = useSocket()
   const {
     register,
@@ -21,12 +21,12 @@ const ChatInput = ({ socket }) => {
   //     console.log('received', data)
   //   })
   // }, [socket])
-
-  const onSubmitHandler = (data) => {
-    socket.emit('sendMessage', data)
+  const onSubmitHandler = ({ message }) => {
+    sendMessage(message)
+    // socket.emit('sendMessage', { messages, user })
     // console.log(data)
     // axios
-    //   .post('http://localhost:1337/auth/signIn', data)
+    //   .post('http://localhost:3001/auth/signIn', data)
     //   .then((response) => {
     //     Auth.login(response.data.token)
     //     toast.success(`Hey ${data.username} welcome back :)`)
@@ -50,11 +50,11 @@ const ChatInput = ({ socket }) => {
         className='flex justify-between w-full p-10'
       >
         <input
-          id='username'
+          id='message'
           className='w-full px-4 py-2 outline-none rounded-md bg-gray-light'
           // eslint-disable-next-line react/jsx-props-no-spreading
           {...register('message')}
-          onChange={({ target }) => console.log(target.value)}
+          // onChange={({ target }) => console.log(target.value)}
           placeholder='Enter Message...'
           type='text'
         />
