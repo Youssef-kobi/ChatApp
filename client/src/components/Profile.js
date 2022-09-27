@@ -2,9 +2,7 @@ import React from 'react'
 import { useAuth } from '../context/auth'
 
 const Profile = () => {
-  console.log('Profile')
   const Auth = useAuth()
-  console.log(Auth)
   return (
     <div className=' w-full h-full'>
       <h4 className='text-xl font-semibold mb-6'>Contacts</h4>

@@ -10,11 +10,10 @@ export const SocketProvider = ({ children }) => {
   const { logout, token } = useAuth()
   const [socket, setSocket] = useState(null)
   // let socket = ''
-  console.log(token)
   useEffect(() => {
     if (!socket)
       setSocket(
-        io.connect('http://localhost:3001', {
+        io.connect('http://localhost:3005', {
           auth: {
             token,
           },
@@ -28,8 +27,7 @@ export const SocketProvider = ({ children }) => {
 
   socket?.on('connect_error', (err) => {
     logout()
-    toast.error(err.message)
-    console.log(err.message) // prints the message associated with the error
+    toast.error(err.message) // prints the message associated with the error
   })
   // const foo = useMemo(() => SocketContext, [SocketContext])
   return (

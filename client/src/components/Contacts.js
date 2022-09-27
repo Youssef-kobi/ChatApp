@@ -9,14 +9,14 @@ import { useAuth } from '../context/auth'
 // import { useSocket } from '../context/socket'
 import groupSorting from '../utils/groupSorting'
 
-const Contacts = ({ setRoomId }) => {
+const Contacts = ({ setReceiver }) => {
   const { token } = useAuth()
   // const socket = useSocket()
   const [contacts, setContacts] = useState([])
   const [search, setSearch] = useState('')
   useEffect(() => {
     axios
-      .get('http://localhost:3001/api/users', {
+      .get('http://localhost:3005/api/users', {
         headers: {
           token,
         },
@@ -79,7 +79,7 @@ const Contacts = ({ setRoomId }) => {
                 >
                   <button
                     type='button'
-                    onClick={() => setRoomId(word)}
+                    onClick={() => setReceiver(word)}
                     className='first-letter:uppercase font-semibold text-sm mb-1'
                   >
                     {word.username}
@@ -87,7 +87,7 @@ const Contacts = ({ setRoomId }) => {
                   <button
                     type='button'
                     className='rounded-full hover:bg-gray-light'
-                    onClick={() => console.log(word)}
+                    // onClick={() => console.log(word)}
                   >
                     <svg
                       className='w-6 h-6 text-gray-base'

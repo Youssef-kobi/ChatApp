@@ -15,9 +15,10 @@ import useChatMessage from '../hooks/use-chat-messages'
 const Dashboard = () => {
   // const socket = useSocket()
   // const Auth = useAuth()
-  const [room, setRoom] = useState()
+  const [receiver, setReceiver] = useState(null)
   // const { roomId } = Math.random() // Gets roomId from URL
-  const { messages, sendMessage } = useChatMessage(room?.id) // Creates a websocket and manages messaging
+  const { messages, sendMessage, handleTyping, typingStatus } =
+    useChatMessage(receiver) // Creates a websocket and manages messaging
   // const [newMessage, setNewMessage] = useState('') // Message to be sent
 
   // useEffect(() => {
@@ -42,7 +43,6 @@ const Dashboard = () => {
   //     second
   //   }
   // }, [room])
-
   const [selected, setSelected] = useState('chats')
   let sidePage
   switch (selected) {
@@ -50,13 +50,13 @@ const Dashboard = () => {
       sidePage = <Profile />
       break
     case 'groups':
-      sidePage = <Groups setRoomId={setRoom} />
+      sidePage = <Groups setRoomId={setReceiver} />
       break
     case 'contacts':
-      sidePage = <Contacts setRoomId={setRoom} />
+      sidePage = <Contacts setReceiver={setReceiver} />
       break
     default:
-      sidePage = <Chats setRoomId={setRoom} />
+      sidePage = <Chats setRoomId={setReceiver} />
       break
   }
   return (
@@ -66,9 +66,17 @@ const Dashboard = () => {
         {sidePage}
       </div>
       <div className='w-4/5 flex h-full flex-col justify-between bg-white-pure shadow-md z-10 text-gray-base'>
-        <Header room={room} />
-        <ChatHistory messages={messages} room={room} />
-        <ChatInput sendMessage={sendMessage} room={room} />
+        <Header receiver={receiver} />
+        <ChatHistory
+          typingStatus={typingStatus}
+          messages={messages}
+          receiver={receiver}
+        />
+        <ChatInput
+          sendMessage={sendMessage}
+          receiver={receiver}
+          handleTyping={handleTyping}
+        />
       </div>
     </div>
   )

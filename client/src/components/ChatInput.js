@@ -1,66 +1,73 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable react/prop-types */
-import { yupResolver } from '@hookform/resolvers/yup'
+// import { yupResolver } from '@hookform/resolvers/yup'
 // import React, { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
-import { messageSchema } from '../constants/YupValidations'
+// import { useForm } from 'react-hook-form'
+// import { messageSchema } from '../constants/YupValidations'
 // import { useSocket } from '../context/socket'
+import EmojiPicker, {
+  // EmojiStyle,
+  Theme,
+  EmojiClickData,
+  // Emoji,
+} from 'emoji-picker-react'
+import { useState } from 'react'
 
-const ChatInput = ({ sendMessage }) => {
+const ChatInput = ({ sendMessage, receiver, handleTyping }) => {
   // const socket = useSocket()
-  const {
-    register,
-    handleSubmit,
-    // formState: { errors },
-    // reset,
-    // setError,
-  } = useForm({ resolver: yupResolver(messageSchema) })
+  // const {
+  //   register,
+  //   handleSubmit,
+  //   // formState: { errors },
+  //   reset,
+  //   // setError,
+  // } = useForm({ resolver: yupResolver(messageSchema) })
+  const [text, setText] = useState('')
 
-  // useEffect(() => {
-  //   console.log('hollaaa')
-  //   socket.on('receiveMessages', (data) => {
-  //     console.log('received', data)
-  //   })
-  // }, [socket])
+  const [selectedEmoji, setSelectedEmoji] = useState('')
+  const [emojiToggle, setEmojiToggle] = useState(false)
   const onSubmitHandler = ({ message }) => {
-    sendMessage(message)
-    // socket.emit('sendMessage', { messages, user })
-    // console.log(data)
-    // axios
-    //   .post('http://localhost:3001/auth/signIn', data)
-    //   .then((response) => {
-    //     Auth.login(response.data.token)
-    //     toast.success(`Hey ${data.username} welcome back :)`)
-    //     Navigate('/')
-    //   })
-    //   .catch(({ response }) => {
-    //     toast.error(response.data)
-    //     setError(
-    //       response.status === 404 ? 'username' : 'password',
-    //       { type: 'custom', message: response.data },
-    //       { shouldFocus: true }
-    //     )
-    //   })
-    // reset()
+    sendMessage({
+      message,
+      receiverId: receiver._id,
+    })
+    setText('')
   }
-  // console.log(socket)
+  const onClick = (emojiData: EmojiClickData) => {
+    console.log(emojiData)
+    setSelectedEmoji(emojiData.emoji)
+    // setText((prev) => prev)
+  }
+  console.log(selectedEmoji)
   return (
     <div className='w-full h-20 flex justify-between px-4 items-center border-t'>
-      <form
-        onSubmit={handleSubmit(onSubmitHandler)}
+      <div
+        // onSubmit={handleSubmit(onSubmitHandler)}
         className='flex justify-between w-full p-10'
       >
         <input
           id='message'
           className='w-full px-4 py-2 outline-none rounded-md bg-gray-light'
           // eslint-disable-next-line react/jsx-props-no-spreading
-          {...register('message')}
-          // onChange={({ target }) => console.log(target.value)}
+          // {...register('message')}
+          value={text}
+          onChange={(event) => {
+            console.log(event)
+            setText(event.target.value)
+          }}
           placeholder='Enter Message...'
+          onBlur={({ target }) => target.focus}
+          // onKeyUp={(event) => console.log(event)}
+          onKeyDown={handleTyping}
           type='text'
         />
         <div className='flex justify-center items-center text-violet-500'>
           {/* Emoji */}
-          <button type='button' className='p-1 mx-1 '>
+          <button
+            type='button'
+            onClick={() => setEmojiToggle(true)}
+            className='p-1 mx-1 '
+          >
             <svg
               className='w-6 h-6'
               fill='none'
@@ -76,6 +83,22 @@ const ChatInput = ({ sendMessage }) => {
               />
             </svg>
           </button>
+          {emojiToggle && (
+            <EmojiPicker
+              onEmojiClick={onClick}
+              autoFocusSearch={false}
+              theme={Theme.AUTO}
+              lazyLoadEmojis
+              // previewConfig={{
+              //   defaultCaption: "Pick one!",
+              //   defaultEmoji: "1f92a" // 🤪
+              // }}
+              // skinTonesDisabled
+              // searchPlaceHolder="Filter"
+              // defaultSkinTone={SkinTones.MEDIUM}
+              // emojiStyle={EmojiStyle.NATIVE}
+            />
+          )}
           {/* attached file */}
           <button type='button' className='p-1 mx-1'>
             <svg
@@ -112,7 +135,8 @@ const ChatInput = ({ sendMessage }) => {
           </button>
           {/* Send */}
           <button
-            type='submit'
+            type='button'
+            onClick={onSubmitHandler}
             className='p-3 mx-1 rounded-lg text-white-pure bg-violet-500'
           >
             <svg
@@ -125,7 +149,7 @@ const ChatInput = ({ sendMessage }) => {
             </svg>
           </button>
         </div>
-      </form>
+      </div>
     </div>
   )
 }

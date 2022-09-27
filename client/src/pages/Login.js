@@ -30,7 +30,7 @@ const Login = () => {
   // eslint-disable-next-line no-unused-vars
   const onSubmitHandler = (data) => {
     axios
-      .post('http://localhost:3001/auth/signIn', data)
+      .post('http://localhost:3005/auth/signIn', data)
       .then((response) => {
         Auth.login(response.data.token)
         toast.success(`Hey ${data.username} welcome back :)`)

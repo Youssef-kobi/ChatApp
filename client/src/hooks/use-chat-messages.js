@@ -1,50 +1,67 @@
+/* eslint-disable no-underscore-dangle */
 import { useEffect, useRef, useState } from 'react'
 import socketIOClient from 'socket.io-client'
 import { useAuth } from '../context/auth'
 
 const NEW_CHAT_MESSAGE_EVENT = 'newChatMessage' // Name of the event
-const SOCKET_SERVER_URL = 'http://localhost:3001'
+const SOCKET_SERVER_URL = 'http://localhost:3005'
 
-const useChatMessage = (roomId) => {
-  const [messages, setMessages] = useState([]) // Sent and received messages
+const useChatMessage = (receiver) => {
+  const [messages, setMessages] = useState() // Sent and received messages
   const socketRef = useRef()
-  const { token } = useAuth()
-
+  const { token, user } = useAuth()
+  const { username } = useAuth().user
+  const [typingStatus, setTypingStatus] = useState('')
   useEffect(() => {
     // Creates a WebSocket connection
     socketRef.current = socketIOClient.connect(SOCKET_SERVER_URL, {
       auth: {
         token,
       },
-      query: { roomId },
+      query: {
+        receiverId: receiver?._id || '',
+      },
     })
-
+    // socketRef.current.on('getMessage', (Conversation) => {
+    let timer
+    socketRef.current.on('typingResponse', (data) => {
+      clearTimeout(timer)
+      setTypingStatus(data)
+      timer = setTimeout(() => {
+        setTypingStatus('')
+      }, 800)
+    })
+    socketRef.current.emit('join', { receiverId: receiver?._id })
     // Listens for incoming messages
-    socketRef.current.on(NEW_CHAT_MESSAGE_EVENT, (message) => {
-      const incomingMessage = {
-        ...message,
-        ownedByCurrentUser: message.senderId === socketRef.current.id,
-      }
-      setMessages((prevMessages) => [...prevMessages, incomingMessage])
+    socketRef.current.on('getMessage', (Conversation) => {
+      // const incomingMessage = {
+      //   message,
+      //   // ownedByCurrentUser: message.senderId === socketRef.current.id,
+      // }
+      setMessages(Conversation)
     })
 
+    // console.log('socketRef', socketRef)
     // Destroys the socket reference
     // when the connection is closed
     return () => {
       socketRef.current.disconnect()
     }
-  }, [roomId, token])
+  }, [socketRef, receiver?._id, token])
 
+  const handleTyping = () => {
+    socketRef.current.emit('typing', `${username} is Typing`)
+  }
   // Sends a message to the server that
   // forwards it to all users in the same room
-  const sendMessage = (messageBody) => {
+  const sendMessage = ({ message, receiverId }) => {
     socketRef.current.emit(NEW_CHAT_MESSAGE_EVENT, {
-      body: messageBody,
-      senderId: socketRef.current.id,
+      message,
+      senderId: user._id,
+      receiverId,
     })
   }
-
-  return { messages, sendMessage }
+  return { messages, sendMessage, handleTyping, typingStatus }
 }
 
 export default useChatMessage

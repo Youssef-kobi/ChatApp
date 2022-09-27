@@ -28,7 +28,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     if (token)
       axios
-        .get('http://localhost:3001/auth/getMe', {
+        .get('http://localhost:3005/auth/getMe', {
           headers: {
             token,
           },

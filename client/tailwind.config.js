@@ -6,6 +6,35 @@ module.exports = {
       fill: (theme) => ({
         red: theme('colors.red.primary'),
       }),
+      keyframes: {
+        dots: {
+          '0%': {
+            transform: 'translateY(-5%)',
+            // 'animation-timing-function': ' cubic-bezier(0.8, 0, 1, 1)',
+          },
+          '25%': {
+            transform: 'translateY(-15%)',
+            // animationTimingFunction: ' cubic-bezier(0,0,0.2,1)',
+          },
+          '50%': {
+            transform: 'translateY(-5%)',
+            // animationTimingFunction: ' cubic-bezier(0,0,0.2,1)',
+          },
+          '75%': {
+            transform: 'translateY(-15%)',
+            // animationTimingFunction: ' cubic-bezier(0,0,0.2,1)',
+          },
+          '100%': {
+            transform: 'translateY(-5%)',
+            // animationTimingFunction: ' cubic-bezier(0.8, 0, 1, 1)',
+          },
+        },
+      },
+      animation: {
+        dotA: 'dots 2s linear 0.1s infinite',
+        dotB: 'dots 2s linear 0.2s infinite',
+        dotC: 'dots 2s linear 0.3s infinite',
+      },
       colors: {
         white: {
           pure: '#ffffff',
