@@ -12,8 +12,11 @@ import mongoose from 'mongoose';
 import User from './models/user.model.js';
 import {
   addMessage,
+  connectUser,
   createConversation,
   getConversationsByUsers,
+  getLastConversations,
+  setUserStatus,
 } from './utils/socketServices.js';
 
 // Server Initialization
@@ -40,38 +43,43 @@ const io = new Server(server, {
   },
 });
 io.use(socketAuth).on('connection', async (socket) => {
-  const ConnectedUser = await User.findOneAndUpdate(
-    {
-      username: socket.decoded.username,
-    },
-    { socketId: socket.id, status: 'Online' },
-    { new: true }
-  );
-  console.log('ConnectedUser', ConnectedUser);
-  if (socket.handshake.query.receiverId) {
-    console.log('connected : ', socket.handshake.query.receiverId);
+  console.log('connection');
+  const ConnectedUser = await connectUser(socket.decoded.username, socket.id);
+  let lastConversations;
+  socket.on('getLastConversations', async () => {
+    try {
+      lastConversations = await getLastConversations(ConnectedUser._id);
+      socket.emit('lastConversations', lastConversations);
+    } catch (e) {
+      console.log('[error]', 'leave room :', e);
+      socket.emit('error', 'couldnt perform requested action');
+    }
+  });
+  socket.on('join', async ({ receiverId }) => {
     let [UsersRoom] = await getConversationsByUsers(
       ConnectedUser._id.toString(),
-      socket.handshake.query.receiverId
+      receiverId
     );
     if (!UsersRoom) {
       UsersRoom = await createConversation(
         ConnectedUser._id.toString(),
-        socket.handshake.query.receiverId
+        receiverId
       );
     }
-    console.log('created', socket.id);
+    console.log('join : ', UsersRoom._id.toString());
+    socket.on('typing', ({conversationId}) => {
+      socket.to(conversationId.toString()).emit('typingResponse', ConnectedUser.username);
+    });
     socket.join(UsersRoom._id.toString());
     socket.emit('getMessage', UsersRoom);
-    socket.on('typing', (data) =>
-      socket.to(UsersRoom._id.toString()).emit('typingResponse', data)
-    );
-  }
+  });
   socket.on('newChatMessage', async ({ senderId, receiverId, message }) => {
-    // const { email, username, password } = req.body;dd
     try {
+      console.log('senderId', senderId);
+      console.log('receiverId', receiverId);
+      console.log('message', message);
       const IsConversation = await addMessage(senderId, receiverId, message);
-
+      console.log('newMessage');
       socket.nsp
         .to(IsConversation._id.toString())
         .emit('getMessage', IsConversation);
@@ -79,37 +87,28 @@ io.use(socketAuth).on('connection', async (socket) => {
       console.log(err);
     }
   });
-  // socket.on('sendMessage', async ({ senderId, receiverId, message }) => {
-  //   const user = getUser(receiverId);
-  //   const accountId = await accountModel.findById(senderId);
-  //   if (user) {
-  //     socket.to(user.socketId).emit('getMessage', {
-  //       accountId,
-  //       message,
-  //     });
-  //   }
-  // });
-  // const { roomId } = socket.handshake.query;
-
-  // // Listen for new messages
-  // socket.on('newChatMessage', (data) => {
-  //   socket.join(roomId);
-  //   io.in(roomId).emit('newChatMessage', data);
-  // });
-  // const accountId = await Conversation.findById(senderId);
-  // if (user) {
-  //   socket.to(user.socketId).emit('getMessage', {
-  //     accountId,
-  //     message,
-  //   });
-  // }
-  // });
-  // Leave the room if the user closes the socket
-  socket.on('disconnect', () => {
-    // socket.leave(roomId);
-    console.log('disconnected');
+  socket.on('leaveRoom', async ({ conversationId }) => {
+    try {
+      // const [UsersRoom] = await getConversationsByUsers(
+      //   ConnectedUser._id.toString(),
+      //   receiverId
+      // );
+      console.log('[socket]', 'leave room :', conversationId.toString());
+      socket.leave(conversationId.toString());
+      console.log(socket.rooms);
+      // socket.to(room).emit('user left', socket.id);
+    } catch (e) {
+      console.log('[error]', 'leave room :', e);
+      socket.emit('error', 'couldnt perform requested action');
+    }
   });
-});
+  // Leave the room if the user closes the socket
+  socket.on('disconnect', async () => {
+    // socket.leave(UsersRoom._id.toString());
+    await setUserStatus(ConnectedUser._id);
+    console.log('disconnected');
+  })
+})
 server.listen(PORT, (error) => {
   if (!error)
     console.log(

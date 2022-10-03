@@ -2,7 +2,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { yupResolver } from '@hookform/resolvers/yup'
 import axios from 'axios'
-import React from 'react'
+import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
@@ -19,16 +19,35 @@ const Register = () => {
     reset,
   } = useForm({ resolver: yupResolver(registerSchema) })
   const Navigate = useNavigate()
-  // the register function register an input into react-hook-form and return : {
-  //    name: '',
-  //    onChange: ƒ,
-  //    onBlur: ƒ,
-  //    ref: ƒ
-  //  }
-  // eslint-disable-next-line no-unused-vars
-  const onSubmitHandler = (data) => {
+  const [picture, setPicture] = useState()
+  const [uploading, setUpLoading] = useState(false)
+  const onSubmitHandler = async (data) => {
+    let pictureURL
+    if (picture) {
+      // ValuesToSend.picture = values.picture
+      setUpLoading(true)
+      const formImages = new FormData()
+      formImages.append('file', picture)
+      formImages.append('upload_preset', 'qtcplxxy')
+      await axios
+        .post(
+          'https://api.cloudinary.com/v1_1/deewcwlq4/image/upload',
+          formImages
+        )
+        .then((response) => {
+          pictureURL = response.data.secure_url
+          setUpLoading(false)
+        })
+        .catch((err) => {
+          // eslint-disable-next-line no-console
+          console.log(err)
+        })
+    }
     axios
-      .post('http://localhost:3005/auth/signUp', data)
+      .post('http://localhost:3005/auth/signUp', {
+        ...data,
+        picture: pictureURL,
+      })
       .then((response) => {
         toast.success(response.data)
         Navigate(PATHS.LOGIN)
@@ -46,12 +65,16 @@ const Register = () => {
       })
     reset()
   }
-
+  const imageChangeHandler = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setPicture(e.currentTarget.files[0])
+    }
+  }
   return (
-    <div className='h-screen w-full flex justify-center pt-24 bg-blue-light'>
+    <div className='h-screen w-full flex justify-center items-center bg-blue-light'>
       <div className='container w-3/12 flex flex-col items-center px-3'>
         <div className='flex flex-col items-center w-full'>
-          <img className='mb-12 h-[30px] mx-0 ' src='./Logo.svg' alt='logo' />
+          <img className='h-[6rem] mx-0 ' src='./Logo.svg' alt='logo' />
           <h4 className=' text-[1.3rem] text-center font-bold text-black-light mb-2'>
             Sign Up
           </h4>
@@ -66,6 +89,115 @@ const Register = () => {
             className='flex flex-col w-full p-10'
           >
             <div className='flex flex-col w-full mb-3 text-black-light font-medium'>
+              <div className='w-full flex justify-center'>
+                <label
+                  htmlFor='picture'
+                  className='cursor-pointer border rounded-full'
+                >
+                  <input
+                    accept='image/*'
+                    id='picture'
+                    style={{ display: 'none' }}
+                    type='file'
+                    // name={name}
+                    onChange={imageChangeHandler}
+                  />
+                  {uploading && 'uploading...'}
+                  <img
+                    src={`${
+                      picture ? URL.createObjectURL(picture) : './avatar.svg'
+                    }`}
+                    className='h-[8rem] w-[8rem] rounded-full bg-blue-light border-4'
+                    alt='Your Avatar'
+                  />
+                </label>
+              </div>
+              <div className='flex justify-between'>
+                <div className='flex flex-col w-full mb-3 text-black-light font-medium mr-4'>
+                  <label className='mb-2 ' htmlFor='firstName'>
+                    First name
+                  </label>
+                  <div
+                    className={`flex w-full border rounded h-10 ${
+                      !errors.firstName?.message
+                        ? 'border-gray-light'
+                        : 'border-red-700 border-2'
+                    }`}
+                  >
+                    <label
+                      htmlFor='firstName'
+                      className='bg-white-light flex justify-center items-center w-12'
+                    >
+                      <svg
+                        className='w-4 h-4 text-gray-base'
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'
+                        xmlns='http://www.w3.org/2000/svg'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth={2}
+                          d='M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'
+                        />
+                      </svg>
+                    </label>
+                    <input
+                      id='firstName'
+                      className='w-full px-4 py-2 outline-none'
+                      {...register('firstName')}
+                      placeholder='First Name'
+                      type='text'
+                    />
+                  </div>
+                  <p className='text-xs px-1 first-letter:uppercase text-red-700'>
+                    {errors.firstName?.message}
+                  </p>
+                </div>
+                <div className='flex flex-col w-full mb-3 text-black-light font-medium'>
+                  <label className='mb-2 ' htmlFor='lastName'>
+                    Last name
+                  </label>
+                  <div
+                    className={`flex w-full border rounded h-10 ${
+                      !errors.lastName?.message
+                        ? 'border-gray-light'
+                        : 'border-red-700 border-2'
+                    }`}
+                  >
+                    <label
+                      htmlFor='lastName'
+                      className='bg-white-light flex justify-center items-center w-12'
+                    >
+                      <svg
+                        className='w-4 h-4 text-gray-base'
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'
+                        xmlns='http://www.w3.org/2000/svg'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth={2}
+                          d='M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'
+                        />
+                      </svg>
+                    </label>
+                    <input
+                      id='lastName'
+                      className='w-full px-4 py-2 outline-none'
+                      {...register('lastName')}
+                      placeholder='Last name'
+                      type='text'
+                    />
+                  </div>
+                  <p className='text-xs px-1 first-letter:uppercase text-red-700'>
+                    {errors.lastName?.message}
+                  </p>
+                </div>
+              </div>
               <label className='mb-2 ' htmlFor='email'>
                 Email
               </label>

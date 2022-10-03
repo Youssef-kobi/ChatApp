@@ -4,12 +4,26 @@
 // import { useSocket } from '../context/socket'
 // import { useEffect, useState } from 'react'
 // import { useSocket } from '../context/socket'
-import { useAuth } from '../context/auth'
+import { useEffect, useState } from 'react'
+import { useAuth } from '../../context/auth'
+import { useSocket } from '../../context/socket'
 
-const ChatHistory = ({ messages: Conversation, receiver, typingStatus }) => {
+const ChatHistory = ({ receiver, conversation }) => {
   const { user } = useAuth()
-
-  const nps = Conversation?.message.slice().reverse()
+  const socket = useSocket()
+  const [typingStatus, setTypingStatus] = useState()
+  useEffect(() => {
+    let timer
+    // TypingResponse
+    socket?.on('typingResponse', (username) => {
+      clearTimeout(timer)
+      setTypingStatus(`${username} is Typing`)
+      timer = setTimeout(() => {
+        setTypingStatus('')
+      }, 800)
+    })
+  }, [socket])
+  const nps = conversation?.message.slice().reverse()
   return (
     <div className=' bg-white-pure h-full overflow-y-auto '>
       <ol className='w-full flex flex-col-reverse h-full  overflow-y-auto  px-4 pt-4'>
@@ -26,7 +40,7 @@ const ChatHistory = ({ messages: Conversation, receiver, typingStatus }) => {
             </div>
           </li>
         )}
-        {Conversation
+        {conversation
           ? nps.map((item) => (
               <li
                 // eslint-disable-next-line react/no-array-index-key
@@ -36,14 +50,14 @@ const ChatHistory = ({ messages: Conversation, receiver, typingStatus }) => {
                 }`}
               >
                 <div
-                  className={` p-4 rounded  ${
+                  className={` p-4 rounded-3xl max-w-[50%] ${
                     item.authorId === user._id
                       ? 'bg-violet-500'
                       : ' bg-gray-light'
                   }`}
                 >
                   <p
-                    className={`font-normal  ${
+                    className={`font-normal w-full break-words ${
                       item.authorId === user._id
                         ? 'text-white-light'
                         : ' text-black-light'

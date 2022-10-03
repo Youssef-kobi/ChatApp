@@ -11,6 +11,7 @@ import { AuthProvider, useAuth } from './context/auth'
 // import Login from './pages/Login'
 // import Register from './pages/Register'
 import * as PATHS from './constants/routes'
+import { SocketProvider } from './context/socket'
 // import { SocketProvider } from './context/socket'
 // import {BrowserRouter,Routes,Route} from 'react-dom'
 
@@ -23,13 +24,7 @@ const Dashboard = lazy(() => import('./pages/Dashboard'))
 
 const PrivateOutlet = () => {
   const { isLoggedIn } = useAuth()
-  return isLoggedIn ? (
-    // <SocketProvider>
-    <Outlet />
-  ) : (
-    // </SocketProvider>
-    <Navigate to={PATHS.LOGIN} />
-  )
+  return isLoggedIn ? <Outlet /> : <Navigate to={PATHS.LOGIN} />
 }
 const PublicOutlet = () => {
   /* A hook that is listening to the user state. */
@@ -38,20 +33,22 @@ const PublicOutlet = () => {
 }
 const App = () => (
   <AuthProvider>
-    <Suspense fallback='loading...'>
-      <BrowserRouter>
-        <Routes>
-          <Route element={<PublicOutlet />}>
-            <Route path={PATHS.LOGIN} element={<Login />} />
-            <Route path={PATHS.SIGNUP} element={<Register />} />
-            <Route path={PATHS.RESETPASSWORD} element={<ResetPassword />} />
-          </Route>
-          <Route element={<PrivateOutlet />}>
-            <Route path={PATHS.DASHBOARD} element={<Dashboard />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </Suspense>
+    <SocketProvider>
+      <Suspense fallback='loading...'>
+        <BrowserRouter>
+          <Routes>
+            <Route element={<PublicOutlet />}>
+              <Route path={PATHS.LOGIN} element={<Login />} />
+              <Route path={PATHS.SIGNUP} element={<Register />} />
+              <Route path={PATHS.RESETPASSWORD} element={<ResetPassword />} />
+            </Route>
+            <Route element={<PrivateOutlet />}>
+              <Route path={PATHS.DASHBOARD} element={<Dashboard />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
+      </Suspense>
+    </SocketProvider>
   </AuthProvider>
 )
 

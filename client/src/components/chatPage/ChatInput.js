@@ -5,67 +5,90 @@
 // import { useForm } from 'react-hook-form'
 // import { messageSchema } from '../constants/YupValidations'
 // import { useSocket } from '../context/socket'
-import EmojiPicker, {
-  // EmojiStyle,
-  Theme,
-  EmojiClickData,
-  // Emoji,
-} from 'emoji-picker-react'
-import { useState } from 'react'
+import data from '@emoji-mart/data'
+import Picker from '@emoji-mart/react'
+import { useRef, useState } from 'react'
+import { useAuth } from '../../context/auth'
+import { useSocket } from '../../context/socket'
 
-const ChatInput = ({ sendMessage, receiver, handleTyping }) => {
-  // const socket = useSocket()
-  // const {
-  //   register,
-  //   handleSubmit,
-  //   // formState: { errors },
-  //   reset,
-  //   // setError,
-  // } = useForm({ resolver: yupResolver(messageSchema) })
-  const [text, setText] = useState('')
+const ChatInput = ({ receiver, conversation }) => {
+  const { user } = useAuth()
+  const socket = useSocket()
+  const handleTyping = () => {
+    socket?.emit('typing', {
+      conversationId: conversation._id,
+    })
+  }
+  // Sends a message to the server that
+  // forwards it to all users in the same room
+  const sendMessage = ({ message }) => {
+    socket?.emit('newChatMessage', {
+      message,
+      senderId: user._id,
+      receiverId: receiver._id,
+    })
+  }
+  const [message, setMessage] = useState('')
+  const inputRef = useRef()
 
-  const [selectedEmoji, setSelectedEmoji] = useState('')
+  // const [selectedEmoji, setSelectedEmoji] = useState('')
   const [emojiToggle, setEmojiToggle] = useState(false)
-  const onSubmitHandler = ({ message }) => {
+  const [cursorPosition, setCursorPosition] = useState(0)
+  const onSubmitHandler = (event) => {
+    // console.log(event)
+    event.preventDefault()
     sendMessage({
       message,
       receiverId: receiver._id,
     })
-    setText('')
+    setMessage('')
   }
-  const onClick = (emojiData: EmojiClickData) => {
-    console.log(emojiData)
-    setSelectedEmoji(emojiData.emoji)
-    // setText((prev) => prev)
+  const emojisHandler = (emojiData) => {
+    // setSelectedEmoji(emojiData?.native)
+    setEmojiToggle(false)
+    setMessage(
+      (prev) =>
+        `${prev.slice(0, cursorPosition)}${emojiData?.native}${prev.slice(
+          cursorPosition
+        )}`
+    )
+    setCursorPosition(cursorPosition + emojiData.native.length)
   }
-  console.log(selectedEmoji)
   return (
-    <div className='w-full h-20 flex justify-between px-4 items-center border-t'>
+    <div className='w-full flex justify-between px-4 items-center border-t'>
       <div
         // onSubmit={handleSubmit(onSubmitHandler)}
-        className='flex justify-between w-full p-10'
+        className='flex justify-between w-full p-5'
       >
         <input
           id='message'
           className='w-full px-4 py-2 outline-none rounded-md bg-gray-light'
           // eslint-disable-next-line react/jsx-props-no-spreading
           // {...register('message')}
-          value={text}
+          value={message}
+          ref={inputRef}
           onChange={(event) => {
-            console.log(event)
-            setText(event.target.value)
+            setMessage(event.target.value)
           }}
+          onBlur={
+            (event) => setCursorPosition(event.target.selectionStart)
+            // myRef.current.setSelectionRange(cursorPosition, cursorPosition)
+          }
           placeholder='Enter Message...'
-          onBlur={({ target }) => target.focus}
+          // onBlur={({ target }) => target.focus}
           // onKeyUp={(event) => console.log(event)}
-          onKeyDown={handleTyping}
+          onKeyDown={(event) =>
+            event.key === 'Enter' ? onSubmitHandler(event) : handleTyping()
+          }
           type='text'
         />
         <div className='flex justify-center items-center text-violet-500'>
           {/* Emoji */}
           <button
             type='button'
-            onClick={() => setEmojiToggle(true)}
+            onClick={() => {
+              setEmojiToggle(!emojiToggle)
+            }}
             className='p-1 mx-1 '
           >
             <svg
@@ -84,20 +107,12 @@ const ChatInput = ({ sendMessage, receiver, handleTyping }) => {
             </svg>
           </button>
           {emojiToggle && (
-            <EmojiPicker
-              onEmojiClick={onClick}
-              autoFocusSearch={false}
-              theme={Theme.AUTO}
-              lazyLoadEmojis
-              // previewConfig={{
-              //   defaultCaption: "Pick one!",
-              //   defaultEmoji: "1f92a" // 🤪
-              // }}
-              // skinTonesDisabled
-              // searchPlaceHolder="Filter"
-              // defaultSkinTone={SkinTones.MEDIUM}
-              // emojiStyle={EmojiStyle.NATIVE}
-            />
+            <div
+              className='absolute bottom-14 right-52'
+              onBlur={() => setEmojiToggle(false)}
+            >
+              <Picker data={data} onEmojiSelect={emojisHandler} />
+            </div>
           )}
           {/* attached file */}
           <button type='button' className='p-1 mx-1'>
@@ -136,7 +151,7 @@ const ChatInput = ({ sendMessage, receiver, handleTyping }) => {
           {/* Send */}
           <button
             type='button'
-            onClick={onSubmitHandler}
+            onClick={(event) => onSubmitHandler(event)}
             className='p-3 mx-1 rounded-lg text-white-pure bg-violet-500'
           >
             <svg

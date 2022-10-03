@@ -2,8 +2,24 @@
 import React from 'react'
 
 const Header = ({ receiver }) => (
-  <div className='w-full h-20 flex justify-between px-4 items-center border-b'>
-    <h4>{receiver?.username}</h4>
+  <div className='w-full h-20 flex justify-between p-6 items-center border-b'>
+    <div className='flex items-center'>
+      <div className='m-auto flex rounded-full '>
+        <img
+          src={`${receiver?.picture || './avatar.svg'}`}
+          className='h-10 w-10 rounded-full bg-blue-light mr-2'
+          alt='Your Avatar'
+        />
+      </div>
+      <h5 className='font-semibold text-lg text-black-light first-letter:uppercase'>
+        {receiver.firstName} {receiver.lastName}
+      </h5>
+      <span
+        className={`w-3 h-3 ml-2 rounded-full border-2 ${
+          receiver.status === 'Online' ? 'bg-green-500' : 'bg-gray-500'
+        }`}
+      />
+    </div>
     <div>
       {/* search */}
       <button type='button' className='p-1 mx-1'>

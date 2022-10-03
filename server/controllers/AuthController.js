@@ -6,11 +6,15 @@ import bcrypt from 'bcrypt';
 // @ROUTE /auth/users
 // @METHOD POST
 export const signUp = async (req, res) => {
-  const { email, username, password } = req.body;
+  const { firstName, lastName, email, username, password,picture } = req.body;
   try {
+    console.log(picture)
     const user = await User.create({
-      email,
-      username: username.toLowerCase(),
+      firstName: firstName.toLowerCase(),
+      lastName: lastName.toLowerCase(),
+      email : email.toLowerCase(),
+      username,
+      picture,
       password,
     });
     res.status(201).send('Account created');

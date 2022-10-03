@@ -12,6 +12,17 @@ const UserSchema = new mongoose.Schema(
         'Please fill a valid email address',
       ],
     },
+    firstName: {
+      type: String,
+      required: true,
+    },
+    lastName: {
+      type: String,
+      required: true,
+    },
+    picture: {
+      type: String,
+    },
     username: {
       type: String,
       unique: true,

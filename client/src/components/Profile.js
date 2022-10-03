@@ -4,29 +4,21 @@ import { useAuth } from '../context/auth'
 const Profile = () => {
   const Auth = useAuth()
   return (
-    <div className=' w-full h-full'>
-      <h4 className='text-xl font-semibold mb-6'>Contacts</h4>
+    <div className=' w-full p-6 h-full'>
+      <h4 className='text-xl font-semibold mb-6'>Profile</h4>
       <div className='flex-col w-full mb-6 text-black-light flex justify-center items-center rounded-md font-medium'>
-        <div className='rounded-full h-24 w-24 flex justify-center items-center border-2 mb-6'>
-          <img
-            className='m-4 rounded-full w-11/12 bg-white-pure'
-            src='Logo.png'
-            alt='hello'
-          />
-        </div>
+        <img
+          src={`${Auth.user.picture || './avatar.svg'}`}
+          className='h-[8rem] w-[8rem] rounded-full bg-blue-light border-4'
+          alt='Your Avatar'
+        />
+
         <h5 className='text-base font-semibold first-letter:uppercase'>
-          {Auth.user?.username}
+          {Auth.user?.firstName} {Auth.user?.lastName}
         </h5>
         <div className='flex justify-center items-center'>
-          <div
-            className={`p-[2px] w-1 h-1 border-4 ${
-              Auth.user?.status === 'Online'
-                ? 'border-green-500 '
-                : 'border-gray-500 '
-            }  rounded-full`}
-          />
-
-          <p className='ml-1 font-light text-gray-base'>{Auth.user?.status}</p>
+          <div className='p-[2px] w-1 h-1 border-4 border-green-500  rounded-full' />
+          <p className='ml-1 font-light text-gray-base'>Online</p>
         </div>
       </div>
       <div className='border-t py-6'>

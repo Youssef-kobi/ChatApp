@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 
 const socketAuth = (socket, next) => {
   const token = socket.handshake.auth.token;
+  console.log('socketAuth')
   if (!token) next(new Error('Authentication error'));
   try {
     const decoded = jwt.verify(
@@ -11,6 +12,7 @@ const socketAuth = (socket, next) => {
         if (err) return next(new Error('Authentication error'));
         socket.decoded = decoded;
         next();
+        
       }
     );
   } catch (error) {
