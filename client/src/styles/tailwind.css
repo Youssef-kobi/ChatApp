@@ -7,3 +7,23 @@ body {
   background-color: #f7f7ff;
   font-family: 'Public Sans', sans-serif;
 }
+/* width */
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #b49cec;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  border-radius: 15px;
+  background: #8b5cf6;
+}
+
+/* Handle on hover
+::-webkit-scrollbar-thumb:hover {
+  background: #;
+} */

@@ -15,9 +15,9 @@ const ChatHistory = ({ receiver, conversation }) => {
   useEffect(() => {
     let timer
     // TypingResponse
-    socket?.on('typingResponse', (username) => {
+    socket?.on('typingResponse', (firstName) => {
       clearTimeout(timer)
-      setTypingStatus(`${username} is Typing`)
+      setTypingStatus(`${firstName} is Typing`)
       timer = setTimeout(() => {
         setTypingStatus('')
       }, 800)
@@ -25,7 +25,7 @@ const ChatHistory = ({ receiver, conversation }) => {
   }, [socket])
   const nps = conversation?.message.slice().reverse()
   return (
-    <div className=' bg-white-pure h-full overflow-y-auto '>
+    <div className=' bg-white-pure dark:bg-dark-pure h-full overflow-y-auto '>
       <ol className='w-full flex flex-col-reverse h-full  overflow-y-auto  px-4 pt-4'>
         {typingStatus && (
           <li
@@ -40,60 +40,78 @@ const ChatHistory = ({ receiver, conversation }) => {
             </div>
           </li>
         )}
-        {conversation
-          ? nps.map((item) => (
-              <li
-                // eslint-disable-next-line react/no-array-index-key
-                key={item._id}
-                className={`p-4 m-2 flex flex-col rounded ${
-                  item.authorId === user._id ? 'items-end' : ' items-start '
-                }`}
-              >
-                <div
-                  className={` p-4 rounded-3xl max-w-[50%] ${
-                    item.authorId === user._id
-                      ? 'bg-violet-500'
-                      : ' bg-gray-light'
+        {nps
+          ? nps.map((item) => {
+              const contactedUser = item.authorId === user._id ? user : receiver
+              return (
+                <li
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={item._id}
+                  className={`p-4 m-2 flex flex-col rounded ${
+                    item.authorId === user._id ? 'items-start' : ' items-end '
                   }`}
                 >
-                  <p
-                    className={`font-normal w-full break-words ${
+                  <div
+                    className={` p-4 rounded-3xl max-w-[50%] ${
                       item.authorId === user._id
-                        ? 'text-white-light'
-                        : ' text-black-light'
+                        ? 'bg-violet-500 ml-12'
+                        : ' bg-gray-light dark:bg-dark-gray  mr-12'
                     }`}
                   >
-                    {item.message}
-                  </p>
-                  <p
-                    className={`text-xs flex items-center ${
-                      item.authorId === user._id && 'text-white-light'
-                    }`}
-                  >
-                    <svg
-                      className='w-4 h-4 mr-1'
-                      fill='none'
-                      stroke='currentColor'
-                      viewBox='0 0 24 24'
-                      xmlns='http://www.w3.org/2000/svg'
+                    <p
+                      className={`font-normal w-full break-words ${
+                        item.authorId === user._id
+                          ? 'text-white-light'
+                          : ' text-black-light dark:text-white-light'
+                      }`}
                     >
-                      <path
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                        strokeWidth={2}
-                        d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'
-                      />
-                    </svg>
-                    {new Date(item.createdAt).toLocaleTimeString()}
-                  </p>
-                </div>
-                <h5 className='text-black-light font-semibold  first-letter:uppercase'>
-                  {item.authorId === user._id
-                    ? user.username
-                    : receiver?.username}
-                </h5>
-              </li>
-            ))
+                      {item.message}
+                    </p>
+                    <p
+                      className={`text-xs flex items-center ${
+                        item.authorId === user._id && 'text-white-pure'
+                      }`}
+                    >
+                      <svg
+                        className='w-4 h-4 mr-1'
+                        fill='none'
+                        stroke='currentColor'
+                        viewBox='0 0 24 24'
+                        xmlns='http://www.w3.org/2000/svg'
+                      >
+                        <path
+                          strokeLinecap='round'
+                          strokeLinejoin='round'
+                          strokeWidth={2}
+                          d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'
+                        />
+                      </svg>
+                      {new Date(item.createdAt).toLocaleTimeString()}
+                    </p>
+                  </div>
+                  <div
+                    className={`flex items-center ${
+                      item.authorId === user._id
+                        ? 'flex-row-reverse'
+                        : 'flex-row'
+                    }`}
+                  >
+                    <h5 className='text-black-light dark:text-white-pure font-semibold  first-letter:uppercase'>
+                      {item.authorId === user._id
+                        ? 'Me'
+                        : `${receiver?.firstName} ${receiver?.lastName}`}
+                    </h5>
+                    <img
+                      src={`${contactedUser.picture || './avatar.svg'}`}
+                      className={`h-10 w-10 rounded-full bg-blue-light ${
+                        item.authorId !== user._id ? 'ml-2 ' : 'mr-2'
+                      }`}
+                      alt='Your Avatar'
+                    />
+                  </div>
+                </li>
+              )
+            })
           : 'blabla'}
       </ol>
     </div>

@@ -1,8 +1,10 @@
 /* eslint-disable react/prop-types */
-import React, { useState } from 'react'
 
-const SideBar = ({ selected, setSelected }) => {
-  const [blackTheme, setBlackTheme] = useState(false)
+import { useAuth } from '../../context/auth'
+
+const SideBar = ({ selected, setSelected, setDarkMode, darkMode }) => {
+  // const [blackTheme, setBlackTheme] = useState(false)
+  const { user, logout } = useAuth()
   const chatPreferences = [
     {
       name: 'profile',
@@ -46,26 +48,26 @@ const SideBar = ({ selected, setSelected }) => {
 
       onClick: '',
     },
-    {
-      name: 'groups',
-      img: (
-        <svg
-          className='w-7 h-7 '
-          fill='none'
-          stroke='currentColor'
-          viewBox='0 0 24 24'
-          xmlns='http://www.w3.org/2000/svg'
-        >
-          <path
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            strokeWidth={2}
-            d='M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z'
-          />
-        </svg>
-      ),
-      onClick: '',
-    },
+    // {
+    //   name: 'groups',
+    //   img: (
+    //     <svg
+    //       className='w-7 h-7 '
+    //       fill='none'
+    //       stroke='currentColor'
+    //       viewBox='0 0 24 24'
+    //       xmlns='http://www.w3.org/2000/svg'
+    //     >
+    //       <path
+    //         strokeLinecap='round'
+    //         strokeLinejoin='round'
+    //         strokeWidth={2}
+    //         d='M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z'
+    //       />
+    //     </svg>
+    //   ),
+    //   onClick: '',
+    // },
     {
       name: 'contacts',
       img: (
@@ -89,7 +91,7 @@ const SideBar = ({ selected, setSelected }) => {
   ]
 
   return (
-    <div className='bg-white-pure flex flex-col items-center max-w-[4.5rem] min-w-[4.5rem] justify-between p-2 h-screen shadow-md z-10 text-gray-base'>
+    <div className='bg-white-pure dark:bg-dark-pure flex flex-col items-center max-w-[4.5rem] min-w-[4.5rem] justify-between p-2 h-screen shadow-md z-10 text-gray-base'>
       <div className='min-h-[4.5rem] flex  justify-center items-center max-h-[4.5rem]'>
         <img src='Logo.svg' className='h-full' alt='Logo' />
       </div>
@@ -99,8 +101,9 @@ const SideBar = ({ selected, setSelected }) => {
             type='button'
             key={item.name}
             onClick={() => setSelected(item.name)}
-            className={`w-14 h-14 flex my-2 justify-center items-center rounded hover:bg-gray-light group relative duration-300 ${
-              selected === item.name && 'bg-gray-light text-violet-500'
+            className={`w-14 h-14 flex my-2 justify-center items-center rounded hover:bg-gray-light dark:hover:bg-dark-gray group relative duration-300 ${
+              selected === item.name &&
+              'bg-gray-light dark:bg-dark-gray  text-violet-500'
             } `}
           >
             {item.img}
@@ -113,7 +116,7 @@ const SideBar = ({ selected, setSelected }) => {
       <div className='flex flex-col justify-center items-center'>
         <button
           type='button'
-          className='w-14 h-14 flex justify-center items-center rounded hover:bg-gray-light  group relative duration-300'
+          className='w-14 h-14 flex justify-center items-center rounded hover:bg-gray-light dark:hover:bg-dark-gray  group relative duration-300'
         >
           <span className="absolute hidden group-hover:flex -top-2 -translate-y-full px-2 py-1 bg-gray-400 rounded-lg text-center text-white-pure text-sm after:content-[''] after:absolute after:left-1/2 after:top-[100%] after:-translate-x-1/2 after:border-8 after:border-x-transparent after:border-b-transparent">
             languages
@@ -135,13 +138,15 @@ const SideBar = ({ selected, setSelected }) => {
         </button>
         <button
           type='button'
-          onClick={() => setBlackTheme(!blackTheme)}
-          className='w-14 h-14 flex justify-center items-center rounded hover:bg-gray-light  group relative duration-300'
+          onClick={() => {
+            setDarkMode(!darkMode)
+          }}
+          className='w-14 h-14 flex justify-center items-center rounded hover:bg-gray-light dark:hover:bg-dark-gray   group relative duration-300'
         >
           <span className="absolute hidden group-hover:flex -top-2 -translate-y-full px-2 py-1 bg-gray-400 rounded-lg text-center text-white-pure text-sm after:content-[''] after:absolute after:left-1/2 after:top-[100%] after:-translate-x-1/2 after:border-8 after:border-x-transparent after:border-b-transparent">
             Dark/Light mode
           </span>
-          {blackTheme ? (
+          {darkMode ? (
             <svg
               className='w-7 h-7 '
               fill='currentColor'
@@ -169,25 +174,69 @@ const SideBar = ({ selected, setSelected }) => {
         </button>
         <button
           type='button'
-          className='w-14 h-14 flex justify-center items-center rounded hover:bg-gray-light  group relative duration-300'
+          className='w-14 h-14 flex justify-center items-center rounded hover:bg-gray-light dark:hover:bg-dark-gray  group relative duration-300'
         >
-          <span className="absolute hidden group-hover:flex -top-2 -translate-y-full px-2 py-1 bg-gray-400 rounded-lg text-center text-white-pure text-sm after:content-[''] after:absolute after:left-1/2 after:top-[100%] after:-translate-x-1/2 after:border-8 after:border-x-transparent after:border-b-transparent">
-            avatar
-          </span>
-          <svg
-            className='w-7 h-7 '
-            fill='none'
-            stroke='currentColor'
-            viewBox='0 0 24 24'
-            xmlns='http://www.w3.org/2000/svg'
-          >
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth={2}
-              d='M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z'
+          <div className='m-auto flex rounded-full '>
+            <img
+              src={`${user?.picture || './avatar.svg'}`}
+              className='h-10 w-10 rounded-full bg-blue-light border-2 dark:border-dark-light'
+              alt='Your Avatar'
             />
-          </svg>
+          </div>
+          <ol className='absolute  py-2 hidden group-hover:flex group-hover:flex-col left-0 -translate-y-full text-base font-semibold w-32  bg-white-pure -top-0 border rounded-md after:absolute after:left-full '>
+            <li className='p-4 w-full hover:bg-gray-light'>
+              <button
+                className='flex w-full justify-between'
+                type='button'
+                onClick={() => setSelected('profile')}
+              >
+                Settings
+                <svg
+                  className='w-6 h-6'
+                  fill='none'
+                  stroke='currentColor'
+                  viewBox='0 0 24 24'
+                  xmlns='http://www.w3.org/2000/svg'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z'
+                  />
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M15 12a3 3 0 11-6 0 3 3 0 016 0z'
+                  />
+                </svg>
+              </button>
+            </li>
+            <li className='p-4 w-full hover:bg-gray-light'>
+              <button
+                className='flex w-full justify-between'
+                type='button'
+                onClick={() => logout()}
+              >
+                Log out
+                <svg
+                  className='w-6 h-6'
+                  fill='none'
+                  stroke='currentColor'
+                  viewBox='0 0 24 24'
+                  xmlns='http://www.w3.org/2000/svg'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1'
+                  />
+                </svg>
+              </button>
+            </li>
+          </ol>
         </button>
       </div>
     </div>

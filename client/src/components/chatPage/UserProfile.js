@@ -1,20 +1,17 @@
-import React from 'react'
-import { useAuth } from '../context/auth'
-
-const Profile = () => {
-  const Auth = useAuth()
+/* eslint-disable react/prop-types */
+const UserProfile = ({ user }) => {
+  console.log(user)
   return (
     <div className=' w-full p-6 h-full'>
-      <h4 className='text-xl font-semibold mb-6'>Profile</h4>
       <div className='flex-col w-full mb-6 text-black-light dark:text-white-pure flex justify-center items-center rounded-md font-medium'>
         <img
-          src={`${Auth.user.picture || './avatar.svg'}`}
+          src={`${user.picture || './avatar.svg'}`}
           className='h-[8rem] w-[8rem] rounded-full bg-blue-light border-4 dark:border-dark-gray'
           alt='Your Avatar'
         />
 
         <h5 className='text-base font-semibold first-letter:uppercase'>
-          {Auth.user?.firstName} {Auth.user?.lastName}
+          {user?.firstName} {user?.lastName}
         </h5>
         <div className='flex justify-center items-center'>
           <div className='p-[2px] w-1 h-1 border-4 border-green-500  rounded-full' />
@@ -30,19 +27,19 @@ const Profile = () => {
           <div className='mb-6'>
             <h5 className='text-gray-base'>Username</h5>
             <h6 className='font-semibold text-sm ml-1 first-letter:uppercase'>
-              {Auth.user?.username}
+              {user?.username}
             </h6>
           </div>
           <div className='mb-6'>
             <h5 className='text-gray-base'>Email</h5>
             <h6 className='font-semibold text-sm ml-1 first-letter:uppercase'>
-              {Auth.user?.email}
+              {user?.email}
             </h6>
           </div>
           <div className='mb-6'>
             <h5 className='text-gray-base'>Created :</h5>
             <h6 className='font-semibold text-sm ml-1 first-letter:uppercase'>
-              {new Date(Auth.user?.createdAt).toDateString()}
+              {new Date(user?.createdAt).toDateString()}
             </h6>
           </div>
         </div>
@@ -51,4 +48,4 @@ const Profile = () => {
   )
 }
 
-export default Profile
+export default UserProfile

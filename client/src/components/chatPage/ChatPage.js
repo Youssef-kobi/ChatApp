@@ -14,7 +14,7 @@ const ChatPage = ({ receiver }) => {
   useEffect(() => {
     socket?.emit('join', { receiverId: receiver?._id })
     socket?.on('getMessage', (Conversation) => {
-      setConversation(Conversation)
+      setConversation((prev) => ({ ...prev, ...Conversation }))
     })
     return () => {
       if (conversation?._id)
@@ -23,11 +23,11 @@ const ChatPage = ({ receiver }) => {
   }, [socket, receiver?._id, conversation?._id])
 
   return (
-    <div className='w-4/5 flex h-full flex-col justify-between bg-white-pure shadow-md z-10 text-gray-base'>
+    <>
       <Header receiver={receiver} />
       <ChatHistory conversation={conversation} receiver={receiver} />
       <ChatInput conversation={conversation} receiver={receiver} />
-    </div>
+    </>
   )
 }
 

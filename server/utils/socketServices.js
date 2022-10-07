@@ -25,7 +25,7 @@ export const getConversationsByUsers = async (senderId, receiverId) => {
       { senderId: senderId, receiverId: receiverId },
       { senderId: receiverId, receiverId: senderId },
     ],
-  });
+  })
   return getConversation;
 };
 

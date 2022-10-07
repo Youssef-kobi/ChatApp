@@ -34,7 +34,7 @@ const Contacts = ({ setReceiver }) => {
     <div className=' w-full h-full'>
       <div className='p-6'>
         <h4 className='text-xl font-semibold mb-6'>Contacts</h4>
-        <div className='flex flex-col w-full text-black-light bg-gray-light rounded-md font-medium'>
+        <div className='flex flex-col w-full text-black-light bg-gray-light dark:bg-dark-gray  rounded-md font-medium'>
           <div className='flex w-full h-10'>
             <label
               htmlFor='search'
@@ -57,7 +57,7 @@ const Contacts = ({ setReceiver }) => {
             </label>
             <input
               id='search'
-              className='w-full px-2 py-2 outline-none rounded-md bg-gray-light'
+              className='w-full px-2 py-2 outline-none rounded-md bg-gray-light dark:bg-dark-gray '
               onChange={({ target }) => setSearch(target.value)}
               placeholder='search contacts'
               type='text'
@@ -91,7 +91,7 @@ const Contacts = ({ setReceiver }) => {
                   </button>
                   <button
                     type='button'
-                    className='rounded-full hover:bg-gray-light'
+                    className='rounded-full hover:bg-gray-light dark:hover:bg-dark-gray '
                     // onClick={() => console.log(word)}
                   >
                     <svg

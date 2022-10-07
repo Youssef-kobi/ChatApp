@@ -35,13 +35,14 @@ const ChatInput = ({ receiver, conversation }) => {
   const [emojiToggle, setEmojiToggle] = useState(false)
   const [cursorPosition, setCursorPosition] = useState(0)
   const onSubmitHandler = (event) => {
-    // console.log(event)
-    event.preventDefault()
-    sendMessage({
-      message,
-      receiverId: receiver._id,
-    })
-    setMessage('')
+    if (message.trim()) {
+      event.preventDefault()
+      sendMessage({
+        message,
+        receiverId: receiver._id,
+      })
+      setMessage('')
+    }
   }
   const emojisHandler = (emojiData) => {
     // setSelectedEmoji(emojiData?.native)
@@ -55,14 +56,14 @@ const ChatInput = ({ receiver, conversation }) => {
     setCursorPosition(cursorPosition + emojiData.native.length)
   }
   return (
-    <div className='w-full flex justify-between px-4 items-center border-t'>
+    <div className='w-full flex justify-between px-4 items-center border-t dark:border-dark-gray py-6'>
       <div
         // onSubmit={handleSubmit(onSubmitHandler)}
         className='flex justify-between w-full p-5'
       >
         <input
           id='message'
-          className='w-full px-4 py-2 outline-none rounded-md bg-gray-light'
+          className='w-full px-4 py-2 outline-none rounded-md bg-gray-light dark:bg-dark-gray '
           // eslint-disable-next-line react/jsx-props-no-spreading
           // {...register('message')}
           value={message}

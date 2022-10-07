@@ -14,15 +14,15 @@ const Chats = ({ setReceiver, receiver }) => {
   useEffect(() => {
     socket?.emit('getLastConversations')
     socket?.on('lastConversations', (Conversations) => {
-      setConversations(Conversations)
+      setConversations(() => Conversations)
     })
-  }, [socket])
+  }, [socket, conversations])
   return (
     // const [search, setSearch] = useState('')
     <div className=' w-full h-full '>
       <div className='p-6'>
         <h4 className='text-xl font-semibold mb-6'>Chats</h4>
-        <div className='flex flex-col w-full mb-3 text-black-light bg-gray-light rounded-md font-medium'>
+        <div className='flex flex-col w-full mb-3 text-black-light dark:text-white-pure bg-gray-light dark:bg-dark-gray  rounded-md font-medium'>
           <div className={`flex w-full  h-10 `}>
             <label
               htmlFor='search'
@@ -45,7 +45,7 @@ const Chats = ({ setReceiver, receiver }) => {
             </label>
             <input
               id='search'
-              className='w-full px-2 py-2 outline-none rounded-md bg-gray-light'
+              className='w-full px-2 py-2 outline-none rounded-md bg-gray-light dark:bg-dark-gray '
               placeholder='search'
               type='text'
             />
@@ -74,18 +74,19 @@ const Chats = ({ setReceiver, receiver }) => {
                           // setSelected(contactedUser)
                           setReceiver(contactedUser)
                         }}
-                        className={`flex justify-between rounded-xl hover:bg-gray-light w-full px-5 py-4 ${
-                          receiver?._id === contactedUser._id && 'bg-gray-light'
+                        className={`flex justify-between rounded-xl hover:bg-gray-light dark:hover:bg-dark-gray  w-full px-5 py-4 ${
+                          receiver?._id === contactedUser._id &&
+                          'bg-gray-light dark:bg-dark-gray '
                         }`}
                       >
                         <div className='m-auto flex rounded-full '>
                           <img
                             src={`${contactedUser?.picture || './avatar.svg'}`}
-                            className={`h-10 w-10 rounded-full bg-blue-light border-2  ${
+                            className={`h-10 w-10 max-w-[10rem] rounded-full bg-blue-light border-2  ${
                               contactedUser.status === 'Online'
                                 ? 'border-green-500 '
                                 : 'border-gray-500 '
-                            }F`}
+                            }`}
                             alt='Your Avatar'
                           />
                         </div>

@@ -68,18 +68,14 @@ io.use(socketAuth).on('connection', async (socket) => {
     }
     console.log('join : ', UsersRoom._id.toString());
     socket.on('typing', ({conversationId}) => {
-      socket.to(conversationId.toString()).emit('typingResponse', ConnectedUser.username);
+      socket.to(conversationId.toString()).emit('typingResponse', ConnectedUser.firstName);
     });
     socket.join(UsersRoom._id.toString());
     socket.emit('getMessage', UsersRoom);
   });
   socket.on('newChatMessage', async ({ senderId, receiverId, message }) => {
     try {
-      console.log('senderId', senderId);
-      console.log('receiverId', receiverId);
-      console.log('message', message);
       const IsConversation = await addMessage(senderId, receiverId, message);
-      console.log('newMessage');
       socket.nsp
         .to(IsConversation._id.toString())
         .emit('getMessage', IsConversation);
@@ -95,7 +91,6 @@ io.use(socketAuth).on('connection', async (socket) => {
       // );
       console.log('[socket]', 'leave room :', conversationId.toString());
       socket.leave(conversationId.toString());
-      console.log(socket.rooms);
       // socket.to(room).emit('user left', socket.id);
     } catch (e) {
       console.log('[error]', 'leave room :', e);

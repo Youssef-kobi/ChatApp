@@ -1,15 +1,27 @@
 /* eslint-disable no-underscore-dangle */
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import ChatPage from '../components/chatPage/ChatPage'
 import Chats from '../components/Chats'
 import Contacts from '../components/Contacts'
-import Groups from '../components/Groups'
+// import Groups from '../components/Groups'
 import Profile from '../components/Profile'
 import SideBar from '../components/chatPage/SideBar'
+import EmptyChatPage from '../components/chatPage/EmptyChatPage'
 // import { useSocket } from '../context/socket'
 
 // import { useAuth } from '../context/auth'
 const Dashboard = () => {
+  const [darkMode, setDarkMode] = useState(
+    JSON.parse(localStorage.getItem('theme'))
+  )
+  useEffect(() => {
+    if (!darkMode) {
+      localStorage.setItem('theme', JSON.stringify(false))
+    } else {
+      localStorage.setItem('theme', JSON.stringify(true))
+    }
+  }, [darkMode])
+
   const [receiver, setReceiver] = useState(null)
   const [selected, setSelected] = useState('chats')
   let sidePage
@@ -17,9 +29,9 @@ const Dashboard = () => {
     case 'profile':
       sidePage = <Profile />
       break
-    case 'groups':
-      sidePage = <Groups setRoomId={setReceiver} />
-      break
+    // case 'groups':
+    //   sidePage = <Groups setRoomId={setReceiver} />
+    //   break
     case 'contacts':
       sidePage = <Contacts setReceiver={setReceiver} />
       break
@@ -28,12 +40,21 @@ const Dashboard = () => {
       break
   }
   return (
-    <div className=' w-full h-screen flex items-center'>
-      <SideBar setSelected={setSelected} selected={selected} />
-      <div className='w-[21.5%] flex h-full flex-col items-center text-black-light bg-white-light'>
+    <div
+      className={`w-full h-screen flex items-center ${darkMode ? 'dark' : ''}`}
+    >
+      <SideBar
+        setSelected={setSelected}
+        selected={selected}
+        setDarkMode={setDarkMode}
+        darkMode={darkMode}
+      />
+      <div className=' sm:w-1/5 w-2/5 flex h-full flex-col items-center text-black-light dark:text-white-light bg-white-light dark:bg-dark-light'>
         {sidePage}
       </div>
-      {receiver && <ChatPage receiver={receiver} />}
+      <div className='w-4/5 flex h-full flex-col justify-between bg-white-pure dark:bg-dark-pure shadow-md z-10 text-gray-base'>
+        {receiver ? <ChatPage receiver={receiver} /> : <EmptyChatPage />}
+      </div>
     </div>
   )
 }

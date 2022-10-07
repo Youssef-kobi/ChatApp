@@ -7,11 +7,11 @@ import { useAuth } from './auth'
 const SocketContext = createContext()
 export const useSocket = () => useContext(SocketContext)
 export const SocketProvider = ({ children }) => {
-  const { logout, token } = useAuth()
+  const { logout, isLoggedIn, token } = useAuth()
   const [socket, setSocket] = useState()
   // let socket = ''
   useEffect(() => {
-    if (!socket && token)
+    if (!socket && isLoggedIn)
       setSocket(
         io('http://localhost:3005', {
           auth: {
@@ -23,7 +23,7 @@ export const SocketProvider = ({ children }) => {
     return () => {
       socket?.disconnect()
     }
-  }, [socket, token])
+  }, [socket, isLoggedIn, token])
   socket?.on('connect_error', (err) => {
     logout()
     toast.error(err.message) // prints the message associated with the error
