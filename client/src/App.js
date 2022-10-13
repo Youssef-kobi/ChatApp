@@ -5,13 +5,13 @@ import {
   Outlet,
   Navigate,
 } from 'react-router-dom'
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { AuthProvider, useAuth } from './context/auth'
 // import Dashboard from './pages/Dashboard'
 // import Login from './pages/Login'
 // import Register from './pages/Register'
 import * as PATHS from './constants/routes'
-import { SocketProvider } from './context/socket'
+import { SocketProvider, useSocket } from './context/socket'
 // import { SocketProvider } from './context/socket'
 // import {BrowserRouter,Routes,Route} from 'react-dom'
 
@@ -31,25 +31,34 @@ const PublicOutlet = () => {
   const { isLoggedIn } = useAuth()
   return !isLoggedIn ? <Outlet /> : <Navigate to={PATHS.DASHBOARD} />
 }
-const App = () => (
-  <AuthProvider>
-    <SocketProvider>
-      <Suspense fallback='loading...'>
-        <BrowserRouter>
-          <Routes>
-            <Route element={<PublicOutlet />}>
-              <Route path={PATHS.LOGIN} element={<Login />} />
-              <Route path={PATHS.SIGNUP} element={<Register />} />
-              <Route path={PATHS.RESETPASSWORD} element={<ResetPassword />} />
-            </Route>
-            <Route element={<PrivateOutlet />}>
-              <Route path={PATHS.DASHBOARD} element={<Dashboard />} />
-            </Route>
-          </Routes>
-        </BrowserRouter>
-      </Suspense>
-    </SocketProvider>
-  </AuthProvider>
-)
-
+const App = () => {
+  const socket = useSocket()
+  useEffect(
+    () => () => {
+      socket.disconnect()
+    },
+    [socket]
+  )
+  console.log('App')
+  return (
+    <AuthProvider>
+      <SocketProvider>
+        <Suspense fallback='loading...'>
+          <BrowserRouter>
+            <Routes>
+              <Route element={<PublicOutlet />}>
+                <Route path={PATHS.LOGIN} element={<Login />} />
+                <Route path={PATHS.SIGNUP} element={<Register />} />
+                <Route path={PATHS.RESETPASSWORD} element={<ResetPassword />} />
+              </Route>
+              <Route element={<PrivateOutlet />}>
+                <Route path={PATHS.DASHBOARD} element={<Dashboard />} />
+              </Route>
+            </Routes>
+          </BrowserRouter>
+        </Suspense>
+      </SocketProvider>
+    </AuthProvider>
+  )
+}
 export default App

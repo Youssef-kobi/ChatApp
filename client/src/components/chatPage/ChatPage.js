@@ -1,7 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 /* eslint-disable react/prop-types */
-// import useChatMessage from '../../hooks/use-chat-conversation'
-// import { useEffect } from 'react'
+
 import { useEffect, useState } from 'react'
 import { useSocket } from '../../context/socket'
 import ChatHistory from './ChatHistory'
@@ -11,16 +10,18 @@ import Header from './Header'
 const ChatPage = ({ receiver }) => {
   const socket = useSocket()
   const [conversation, setConversation] = useState()
+  console.log('one render')
   useEffect(() => {
-    socket?.emit('join', { receiverId: receiver?._id })
-    socket?.on('getMessage', (Conversation) => {
-      setConversation((prev) => ({ ...prev, ...Conversation }))
+    socket.emit('join', { receiverId: receiver?._id })
+    socket.on('getMessage', (Conversation) => {
+      setConversation(Conversation)
     })
     return () => {
-      if (conversation?._id)
-        socket?.emit('leaveRoom', { conversationId: conversation?._id })
+      socket.off('getMessage', (Conversation) => setConversation(Conversation))
+      socket.emit('leaveRoom')
+      // setConversation({})
     }
-  }, [socket, receiver?._id, conversation?._id])
+  }, [socket, receiver?._id])
 
   return (
     <>

@@ -4,19 +4,35 @@
 // import React, { useState } from 'react'
 
 import { useEffect, useState } from 'react'
-import { useAuth } from '../context/auth'
-import { useSocket } from '../context/socket'
+import { useAuth } from '../../context/auth'
+import { useSocket } from '../../context/socket'
 
 const Chats = ({ setReceiver, receiver }) => {
   const socket = useSocket()
   const { user } = useAuth()
-  const [conversations, setConversations] = useState()
+  const [conversations, setConversations] = useState([])
+
   useEffect(() => {
+    console.log('useeffect Chats')
     socket?.emit('getLastConversations')
     socket?.on('lastConversations', (Conversations) => {
-      setConversations(() => Conversations)
+      console.log('i got conversations', Conversations)
+      setConversations(Conversations)
     })
-  }, [socket, conversations])
+    socket?.on('lastConversationUpdate', (Conversation) => {
+      setConversations((prev) =>
+        prev.map((item) =>
+          item._id === Conversation._id
+            ? { ...item, message: Conversation.message }
+            : item
+        )
+      )
+    })
+    return () => {
+      socket.off('lastConversations')
+      // socket.emit('seen', { receiverId: receiver?._id })
+    }
+  }, [socket, receiver])
   return (
     // const [search, setSearch] = useState('')
     <div className=' w-full h-full '>
@@ -57,13 +73,12 @@ const Chats = ({ setReceiver, receiver }) => {
         <ol className='mx-2 '>
           {conversations
             ? conversations
-                ?.filter((item) => item.message.length !== 0)
+                .filter((item) => item.message.length !== 0)
                 .map((conversation) => {
                   const contactedUser =
-                    conversation.receiverId._id === user._id
-                      ? conversation.senderId
-                      : conversation.receiverId
-
+                    conversation?.receiverId._id === user._id
+                      ? conversation?.senderId
+                      : conversation?.receiverId
                   const [lastMessage] = conversation.message.slice(-1)
                   return (
                     <li key={conversation._id} className='mb-2'>
@@ -84,19 +99,19 @@ const Chats = ({ setReceiver, receiver }) => {
                             src={`${contactedUser?.picture || './avatar.svg'}`}
                             className={`h-10 w-10 max-w-[10rem] rounded-full bg-blue-light border-2  ${
                               contactedUser.status === 'Online'
-                                ? 'border-green-500 '
-                                : 'border-gray-500 '
+                                ? 'border-green-500'
+                                : 'border-gray-500'
                             }`}
                             alt='Your Avatar'
                           />
                         </div>
                         <div className='flex-grow flex flex-col justify-center items-start ml-4'>
-                          <div className='text-base flex items-center  '>
+                          <div className='text-base flex justify-start items-center  '>
                             <h5 className='font-semibold first-letter:uppercase'>
                               {contactedUser.firstName} {contactedUser.lastName}
                             </h5>
                           </div>
-                          <p className='text-gray-base text-sm'>
+                          <p className='text-gray-base text-start text-sm'>
                             {lastMessage.message}
                           </p>
                         </div>

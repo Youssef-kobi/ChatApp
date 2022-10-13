@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useRef } from 'react'
 import { toast } from 'react-toastify'
 import io from 'socket.io-client'
 import { useAuth } from './auth'
@@ -7,23 +7,20 @@ import { useAuth } from './auth'
 const SocketContext = createContext()
 export const useSocket = () => useContext(SocketContext)
 export const SocketProvider = ({ children }) => {
-  const { logout, isLoggedIn, token } = useAuth()
-  const [socket, setSocket] = useState()
-  // let socket = ''
+  const { logout, token } = useAuth()
+  console.log('hop')
+  const socketRef = useRef(null)
   useEffect(() => {
-    if (!socket && isLoggedIn)
-      setSocket(
-        io('http://localhost:3005', {
-          auth: {
-            token,
-          },
-        })
-      )
-
-    return () => {
-      socket?.disconnect()
+    if (token) {
+      socketRef.current = io('http://localhost:3005', {
+        auth: {
+          token,
+        },
+      })
     }
-  }, [socket, isLoggedIn, token])
+  }, [])
+  const { current: socket } = socketRef
+
   socket?.on('connect_error', (err) => {
     logout()
     toast.error(err.message) // prints the message associated with the error

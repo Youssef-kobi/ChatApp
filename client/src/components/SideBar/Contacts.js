@@ -5,9 +5,9 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 
-import { useAuth } from '../context/auth'
+import { useAuth } from '../../context/auth'
 // import { useSocket } from '../context/socket'
-import groupSorting from '../utils/groupSorting'
+import groupSorting from '../../utils/groupSorting'
 
 const Contacts = ({ setReceiver }) => {
   const { token } = useAuth()

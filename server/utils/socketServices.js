@@ -17,19 +17,60 @@ export const createConversation = async (senderId, receiverId) => {
     senderId,
     receiverId,
   });
-  return createdConversation;
+  const user = await createdConversation.populate(['receiverId', 'senderId']);
+  return user;
 };
 export const getConversationsByUsers = async (senderId, receiverId) => {
-  const getConversation = await Conversation.find({
-    $or: [
-      { senderId: senderId, receiverId: receiverId },
-      { senderId: receiverId, receiverId: senderId },
-    ],
-  })
+  const getConversation = await Conversation.findOneAndUpdate(
+    {
+      $or: [
+        { senderId: senderId, receiverId: receiverId },
+        { senderId: receiverId, receiverId: senderId },
+      ],
+    },
+    {
+      $set: {
+        'message.$[element].read': true,
+      },
+    },
+    {
+      arrayFilters: [
+        {
+          'element.authorId': receiverId,
+        },
+      ],
+    }
+  ).populate(['receiverId', 'senderId']);
   return getConversation;
+};
+export const readMessages = async (senderId, receiverId) => {
+  console.log(senderId, receiverId);
+  const ReadMessages = await Conversation.findOneAndUpdate(
+    {
+      $or: [
+        { senderId: senderId, receiverId: receiverId },
+        { senderId: receiverId, receiverId: senderId },
+      ],
+    },
+    {
+      $set: {
+        'message.$[element].read': true,
+      },
+    },
+    {
+      arrayFilters: [
+        {
+          'element.authorId': receiverId,
+        },
+      ],
+    }
+    // { new: true }
+  );
+  console.log(ReadMessages);
 };
 
 export const addMessage = async (senderId, receiverId, message) => {
+  // await readMessages(senderId, receiverId);
   const AddMessage = await Conversation.findOneAndUpdate(
     {
       $or: [
@@ -43,15 +84,14 @@ export const addMessage = async (senderId, receiverId, message) => {
           _id: new mongoose.Types.ObjectId(),
           message: message,
           authorId: senderId,
+          read: false,
           attachments: [],
           createdAt: new Date(),
         },
       },
     },
-    {
-      new: true,
-    }
-  );
+    { new: true }
+  ).populate(['receiverId', 'senderId']);
   return AddMessage;
 };
 

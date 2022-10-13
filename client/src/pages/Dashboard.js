@@ -1,11 +1,11 @@
 /* eslint-disable no-underscore-dangle */
 import { useState, useEffect } from 'react'
 import ChatPage from '../components/chatPage/ChatPage'
-import Chats from '../components/Chats'
-import Contacts from '../components/Contacts'
+import Chats from '../components/SideBar/Chats'
+import Contacts from '../components/SideBar/Contacts'
 // import Groups from '../components/Groups'
-import Profile from '../components/Profile'
-import SideBar from '../components/chatPage/SideBar'
+import Profile from '../components/SideBar/Profile'
+import SideBar from '../components/SideBar/SideBar'
 import EmptyChatPage from '../components/chatPage/EmptyChatPage'
 // import { useSocket } from '../context/socket'
 

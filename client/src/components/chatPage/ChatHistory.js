@@ -22,8 +22,11 @@ const ChatHistory = ({ receiver, conversation }) => {
         setTypingStatus('')
       }, 800)
     })
+    return () => {
+      socket.off('typingResponse')
+    }
   }, [socket])
-  const nps = conversation?.message.slice().reverse()
+  const nps = conversation?.message?.slice().reverse()
   return (
     <div className=' bg-white-pure dark:bg-dark-pure h-full overflow-y-auto '>
       <ol className='w-full flex flex-col-reverse h-full  overflow-y-auto  px-4 pt-4'>
