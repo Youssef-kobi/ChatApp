@@ -1,12 +1,12 @@
 <h1 align="center">
   <br>
-  <a href="https://github.com/Youssef-kobi/MERN-Template"><img src="https://raw.githubusercontent.com/Youssef-kobi/MERN-Template/main/client/public/Logo.png" alt="MERN" width="200"></a>
+  <a href="https://github.com/Youssef-kobi/ChatApp"><img src="https://raw.githubusercontent.com/Youssef-kobi/ChatApp/main/client/public/Logo.svg" alt="MERN" width="200"></a>
   <br>
-  MERN Template
+  Chat Application
   <br>
 </h1>
 
-<h4 align="center">An updated MERN/Auth <a href="https://github.com/Youssef-kobi/MERN-Template" target="_blank">Template</a>.</h4>
+<h4 align="center">A MERN Socket.io Chat app.</h4>
 
 <p align="center">
  <a href="https://img.shields.io/npm/v/npm?style=plastic"><img src="https://img.shields.io/npm/v/npm?style=plastic" alt="npm version" height="18"></a>
@@ -26,7 +26,7 @@
 
 ## Introduction
 
-This project is a MERN template for building fullstack JavaScript applications. The technology stack is as follows:
+This project is a MERN Chat Application. The technologies used are as follows:
 
 - **MongoDB** as a NoSQL database
 - **React** for the front-end, bootstrapped with "Create React App".
@@ -34,31 +34,33 @@ This project is a MERN template for building fullstack JavaScript applications. 
   - Serves the React app
   - Provides the JSON API for the React app using http
 - **Node.js** for the back-end
+- **Socket.io** for real-time, bi-directional communication between web clients and servers.
 
 ## Key Features
 
 <img align="right"  width="220" height="400" src="https://user-images.githubusercontent.com/52678976/190696479-54fcb58b-ece0-49d4-b469-b37c0c16b45f.PNG" alt="Files Structure"/>
 
 - MERN structured folders
-- TailwindCSS setup
+- TailwindCSS
 - ES7 Airbnb eslint / prettier
 - Axios for API fetching
+- Socket.io for instant messaging
+- Jwt auth for socket connections
 - React-toastify for Toast notification
 - React-hook-form for form management
 - Yup (frontend & backend)for Forms validation
 - @hookform/resolvers to use yup with react-hook-form
 - React-router-dom V6, route restrictions: PrivateOutlet & PublicOutlet
-- Responsiveness 70%
-- Pages: Login, Registration, ForgetPassword, NotFound, Dashboard(empty)
+- Dark/Light mode
+- emoji-mart for chat Emojis
+- Pages: Login, Registration, ForgetPassword, NotFound, Dashboard,
 - Authentication using JWT with verification middleman in the serve routes
-- React Context for LoggedInUser data and login/logout functions
+- React Context for Authentication and Socket
 
 ## TO-DO
 
-- Dark/Light mode
 - Responsiveness 30%
 - Mailing service for user account verification & reset password
-- Profile Page ?
 - Google / Facebook / Twitter Authentication
 
 ## How To Use
