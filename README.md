@@ -35,6 +35,7 @@ This project is a MERN Chat Application. The technologies used are as follows:
 
 ## Key Features
 
+
 <img align="right"  width="220" height="400" src="https://user-images.githubusercontent.com/52678976/190696479-54fcb58b-ece0-49d4-b469-b37c0c16b45f.PNG" alt="Files Structure"/>
 
 - MERN structured folders
